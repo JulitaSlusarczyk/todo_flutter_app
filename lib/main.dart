@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -46,10 +47,36 @@ class _MainPageState extends State<MainPage> {
     super.dispose();
   }
 
-  Future signIn() async {
+  Future signIn(BuildContext context) async {
+    try {
+      var db = FirebaseFirestore.instance;
+      var snap = await db.collection("users").where("login", isEqualTo: emailTextController.text.trim()).get();
+      if(snap.docs.isNotEmpty) {
+        DocumentSnapshot doc=snap.docs.first;
         await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailTextController.text.trim(),
-        password: passwordTextController.text.trim()
+            email: doc['email'],
+            password: passwordTextController.text.trim()
+        );
+      }
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailTextController.text.trim(),
+          password: passwordTextController.text.trim()
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'wrong-password') {
+        ScaffoldMessenger.of(context).showSnackBar(snackBar("Wrong password!"));
+      }
+    }
+  }
+
+  SnackBar snackBar(String message) {
+    return SnackBar(
+      content: Text(
+        message,
+        style: const TextStyle(
+            color: Colors.red
+        ),
+      ),
     );
   }
 
@@ -94,7 +121,9 @@ class _MainPageState extends State<MainPage> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: signIn,
+                      onPressed: (){
+                        signIn(context);
+                      },
                       child: const Text("Sign in"),
                     ),
                     TextButton(
