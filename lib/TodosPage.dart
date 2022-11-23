@@ -19,14 +19,25 @@ class _TodosPageState extends State<TodosPage> {
 
   @override
   Widget build(BuildContext context) {
+    final titleTextController = TextEditingController();
+    final descTextController = TextEditingController();
+
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('users').where("email", isEqualTo: user.email).snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return const Text('Something went wrong');
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text("Loading");
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
         }
         var data = snapshot.data?.docs.first;
         return Scaffold(
@@ -41,12 +52,92 @@ class _TodosPageState extends State<TodosPage> {
             ),
             floatingActionButton: FloatingActionButton(
               child: const Icon(Icons.add),
-              onPressed: (){},
+              onPressed: () => showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  title: const Text('Add Todo'),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextField(
+                        controller: titleTextController,
+                        decoration: const InputDecoration(
+                          labelText: 'Title',
+                        ),
+                      ),
+                      TextField(
+                        controller: descTextController,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: 5,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Description',
+                        ),
+                      )
+                    ],
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: (){
+                        final todo = <String, dynamic>{
+                          "uid": data?['uid'],
+                          "title": titleTextController.text.trim(),
+                          "desc": descTextController.text.trim(),
+                          "isDone": false
+                        };
+                        db.collection("todos").add(todo);
+                        int todosLeft = data?['no_todos']-1;
+                        db.collection("users").doc(data?.id).update({"no_todos": todosLeft});
+                        Navigator.pop(context, 'OK');
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+              )
             ),
-            body: Column(
-              children: [
-                Center(child: Text("Hello ${data?['login']} ${data?['no_todos']}"))
-              ],
+            body: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance.collection('todos').where("uid", isEqualTo: user.uid).snapshots(),
+              builder: (context, snapshot) {
+                if(snapshot.hasData){
+                  return Column(
+                    children: [
+                      Center(child: Text("Hello ${data?['login']} ${data?['no_todos']}")),
+                      Expanded(
+                        child: ListView(
+                          children: snapshot.data!.docs
+                              .map((DocumentSnapshot document) {
+                            Map<String, dynamic> data =
+                            document.data()! as Map<String, dynamic>;
+                            return CheckboxListTile(
+                              title: Text(data['title']),
+                              subtitle: Text(data['desc']),
+                              value: data['isDone'],
+                              onChanged: (a) => db.collection("todos").doc(document.id).update({"isDone": a}),
+                              secondary: const IconButton(
+                                icon: Icon(Icons.delete),
+                                onPressed: null,
+                              ),
+                            );
+                          })
+                              .toList()
+                              .cast(),
+                        ),
+                      )
+                    ],
+                  );
+                } else {
+                  return Column(
+                    children: const [
+                      Center(child: CircularProgressIndicator()),
+                    ],
+                  );
+                }
+              }
             )
         );
       }
