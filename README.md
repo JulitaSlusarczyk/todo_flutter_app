@@ -1,16 +1,10 @@
 # todo_app
 
-A new Flutter project.
+A new Flutter project. It's mobile app for Android (for now) to save your TODOs in Cloud.
 
-## Getting Started
+## Overview
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+In this App you can register by entering login, e-mail and password.
+You can Log in into your account using your login or password. 
+Every new user can add up to 3 free TODOs, after that user can watch ad to get another 3 entries (wip).
+Users and their TODOs are stored in Firebase.
