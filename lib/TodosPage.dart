@@ -24,7 +24,7 @@ class _TodosPageState extends State<TodosPage> {
 
   void _createRewardedAd() {
     RewardedAd.load(
-        adUnitId: "/6499/example/rewarded",
+        adUnitId: "ca-app-pub-3940256099942544/5224354917",
         request: request,
         rewardedAdLoadCallback: RewardedAdLoadCallback(
           onAdLoaded: (RewardedAd ad) {
@@ -114,7 +114,7 @@ class _TodosPageState extends State<TodosPage> {
                         ),
                         TextButton(
                           onPressed: (){
-                            _showRewardedAd(user.uid);
+                            _showRewardedAd(data!.id);
                             Navigator.of(context).pop();
                           },
                           child: const Text('OK'),
@@ -191,9 +191,10 @@ class _TodosPageState extends State<TodosPage> {
                               subtitle: Text(data['desc']),
                               value: data['isDone'],
                               onChanged: (a) => db.collection("todos").doc(document.id).update({"isDone": a}),
-                              secondary: const IconButton(
-                                icon: Icon(Icons.delete),
-                                onPressed: null,
+                              secondary: IconButton(
+                                icon: const Icon(Icons.delete),
+                                onPressed: () => db.collection("todos").doc(document.id).delete(),
+                                color: Colors.red,
                               ),
                             );
                           })
