@@ -90,7 +90,7 @@ class _TodosPageState extends State<TodosPage> {
         var data = snapshot.data?.docs.first;
         return Scaffold(
             appBar: AppBar(
-              title: const Text('My TODOs'),
+              title: Text('Hello ${data?['login']}'),
               actions: [
                 IconButton(
                     onPressed: signOut,
@@ -163,6 +163,8 @@ class _TodosPageState extends State<TodosPage> {
                             db.collection("todos").add(todo);
                             int todosLeft = data?['no_todos']-1;
                             db.collection("users").doc(data?.id).update({"no_todos": todosLeft});
+                            titleTextController.clear();
+                            descTextController.clear();
                             Navigator.pop(context, 'OK');
                           },
                           child: const Text('OK'),
@@ -179,7 +181,34 @@ class _TodosPageState extends State<TodosPage> {
                 if(snapshot.hasData){
                   return Column(
                     children: [
-                      Center(child: Text("Hello ${data?['login']} ${data?['no_todos']}")),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(left: 20.0, top: 8.0, bottom: 8.0),
+                            child: Text(
+                                "My TODOs",
+                                style: TextStyle(
+                                  fontSize: 25
+                                ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              child: Column(
+                                children: [
+                                  const Text("TODOs left:"),
+                                  Text(" ${data?['no_todos']}"),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      const Divider(
+                        height: 2,
+                      ),
                       Expanded(
                         child: ListView(
                           children: snapshot.data!.docs

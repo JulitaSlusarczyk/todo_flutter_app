@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -88,6 +90,9 @@ class _SignUpPageState extends State<SignUpPage> {
                         "no_todos": 3
                       };
                       db.collection("users").add(user);
+                      loginTextController.clear();
+                      emailTextController.clear();
+                      passwordTextController.clear();
                       Navigator.pop(context);
                   }
                 } on FirebaseAuthException catch (e) {
