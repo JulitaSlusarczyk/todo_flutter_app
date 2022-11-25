@@ -106,7 +106,7 @@ class _TodosPageState extends State<TodosPage> {
                     context: context,
                     builder: (BuildContext context) => AlertDialog(
                       title: const Text('Add Todo'),
-                      content: const Text("You run out of your todo entries, do you want to watch an ad for 3 more?"),
+                      content: const Text("You ran out of your todo entries, do you want to watch an ad for 3 more?"),
                       actions: <Widget>[
                         TextButton(
                           onPressed: () => Navigator.pop(context),

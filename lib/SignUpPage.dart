@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'Widgets.dart';
+
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
 
@@ -22,20 +24,8 @@ class _SignUpPageState extends State<SignUpPage> {
     super.dispose();
   }
 
-  SnackBar snackBar(String message) {
-    return SnackBar(
-      content: Text(
-        message,
-        style: const TextStyle(
-            color: Colors.red
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    bool exist;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign up'),
