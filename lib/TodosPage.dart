@@ -11,6 +11,8 @@ class TodosPage extends StatefulWidget {
 }
 
 class _TodosPageState extends State<TodosPage> {
+  final titleTextController = TextEditingController();
+  final descTextController = TextEditingController();
   final user = FirebaseAuth.instance.currentUser!;
   var db = FirebaseFirestore.instance;
   static const AdRequest request = AdRequest(
@@ -66,10 +68,14 @@ class _TodosPageState extends State<TodosPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final titleTextController = TextEditingController();
-    final descTextController = TextEditingController();
+  void dispose() {
+    titleTextController.dispose();
+    descTextController.dispose();
+    super.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('users').where("email", isEqualTo: user.email).snapshots(),
       builder: (context, snapshot) {
